@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhe8eglhjhobb"]
+
+[ext_resource type="Script" path="res://test_scene.gd" id="1_fs0c0"]
+[ext_resource type="Script" path="res://addons/pyramid_container/pyramid_container.gd" id="1_v1skr"]
+
+[node name="TestScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fs0c0")
+
+[node name="PyramidContainer" type="Container" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v1skr")
+draw_enabled = true
+
+[node name="P1" type="Label" parent="PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "P1"
+
+[node name="P2" type="Label" parent="PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "P2"
+
+[node name="P3" type="Label" parent="PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "P3"
+
+[node name="P4" type="Label" parent="PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "P4"
+
+[node name="B1" type="Label" parent="PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "P1"
+
+[node name="B2" type="Label" parent="PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "P4"
