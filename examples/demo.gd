@@ -1,11 +1,30 @@
 extends Control
 
-var players := ["P1", "P4"]
+
+@onready var CONTAINER := $VBox/PyramidContainer
+
+@onready var node_set_1 := CONTAINER.get_children()
+var node_set_2 := []
+
+var active_node_set := 1
+
+func _ready() -> void:
+	for i in range(15):
+		var color_rect := ColorRect.new()
+		color_rect.color = Color(randf(), randf(), randf())
+		node_set_2.append(color_rect)
+
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.keycode == KEY_SPACE and event.pressed:
-		var label := Label.new()
-		label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		label.text = players[randi() % 2]
-		$PyramidContainer.add_child(label)
+	if event is InputEventKey and event.pressed:
+		match event.keycode:
+			KEY_R:
+				CONTAINER.direction = wrapi(
+					CONTAINER.direction + 1, 0, CONTAINER.Direction.size()
+				)
+			KEY_SPACE:
+				for child in CONTAINER.get_children():
+					CONTAINER.remove_child(child)
+				active_node_set = wrapi(active_node_set + 1, 1, 3)
+				for node in get("node_set_%d" % active_node_set):
+					CONTAINER.add_child(node)

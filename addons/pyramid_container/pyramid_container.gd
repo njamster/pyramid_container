@@ -4,16 +4,17 @@ class_name PyramidContainer extends Container
 ## A container that arranges its child controls in the shape of a pyramid.
 
 enum Direction {
-	UP,
-	RIGHT,
-	DOWN,
-	LEFT
+	UP    = 0,
+	RIGHT = 1,
+	DOWN  = 2,
+	LEFT  = 3
 }
+
 @export var direction := Direction.RIGHT:
 	set(value):
 		direction = value
 		if is_inside_tree():
-			propagate_notification(NOTIFICATION_SORT_CHILDREN)
+			queue_sort()
 			queue_redraw()
 
 
@@ -24,21 +25,15 @@ enum Direction {
 		if is_inside_tree():
 			queue_redraw()
 
-@export_range(1, 10, 1, "or_greater", "suffix:px") var draw_line_width := 3.0:
+@export_range(1, 10, 1, "or_greater", "suffix:px") var draw_width := 3.0:
 	set(value):
-		draw_line_width = value
+		draw_width = value
 		if is_inside_tree():
 			queue_redraw()
 
-@export_range(0, 50, 1, "or_greater", "suffix:px") var draw_shortened := 20:
+@export_range(0, 50, 1, "or_greater", "suffix:px") var draw_shortened := 10:
 	set(value):
 		draw_shortened = value
-		if is_inside_tree():
-			queue_redraw()
-
-@export var draw_antialiased := true:
-	set(value):
-		draw_antialiased = value
 		if is_inside_tree():
 			queue_redraw()
 
@@ -48,12 +43,24 @@ enum Direction {
 		if is_inside_tree():
 			queue_redraw()
 
+@export var draw_antialiased := true:
+	set(value):
+		draw_antialiased = value
+		if is_inside_tree():
+			queue_redraw()
+
 
 # for internal use only!
 var _num_layers : int
 var _num_children : int
 var _biggest_included_power_of_two : int
 
+
+func _init() -> void:
+	child_entered_tree.connect(func(node: Node):
+		if not node.visibility_changed.is_connected(queue_redraw):
+			node.visibility_changed.connect(queue_redraw)
+	)
 
 func _ready() -> void:
 	if draw_enabled:
@@ -84,16 +91,12 @@ func _notification(what: int) -> void:
 			match direction:
 				# horizontal directions
 				Direction.LEFT, Direction.RIGHT:
-					fit_child_in_rect(get_child(i), Rect2(
-						Vector2(size.x / _num_layers * factor, size.y / num_nodes_in_layer * pos_in_layer),
-						Vector2(size.x / _num_layers, size.y / num_nodes_in_layer)
-					))
+					var item_size := Vector2(size.x / float(_num_layers), size.y / float(num_nodes_in_layer))
+					fit_child_in_rect(get_child(i), Rect2(item_size * Vector2(factor, pos_in_layer), item_size))
 				# vertical directions
 				Direction.UP, Direction.DOWN:
-					fit_child_in_rect(get_child(i), Rect2(
-						Vector2(size.x / num_nodes_in_layer * pos_in_layer, size.y / _num_layers * factor),
-						Vector2(size.x / num_nodes_in_layer, size.y / _num_layers)
-					))
+					var item_size := Vector2(size.x / float(num_nodes_in_layer), size.y / float(_num_layers))
+					fit_child_in_rect(get_child(i), Rect2(item_size * Vector2(pos_in_layer, factor), item_size))
 
 			if pos_in_layer == num_nodes_in_layer - 1:
 				layer += 1
@@ -117,19 +120,31 @@ func _draw() -> void:
 		var node_a = get_child(i)
 		var node_b = get_child(num_nodes_in_first_layer + i / 2)
 
-		var start = node_a.global_position + 0.5 * node_a.size
-		var end = node_b.global_position + 0.5 * node_b.size
-		var intersection_point := Vector2(end.x, start.y)
-		if direction == Direction.UP or direction == Direction.DOWN:
-			intersection_point = Vector2(start.x, end.y)
+		if not (node_a.visible and node_b.visible):
+			continue
+
+		var start = node_a.position + 0.5 * node_a.size
+		var end = node_b.position + 0.5 * node_b.size
+
+		var points : Array[Vector2] = []
+		if direction % 2 == 0: # vertical direction
+			var intersection_point := Vector2(start.x, end.y)
+			points = [
+				start.move_toward(intersection_point, draw_shortened + 0.5 * node_a.size.y),
+				intersection_point,
+				end.move_toward(intersection_point, draw_shortened + 0.5 * node_b.size.x)
+			]
+		else:
+			var intersection_point := Vector2(end.x, start.y)
+			points = [
+				start.move_toward(intersection_point, draw_shortened + 0.5 * node_a.size.x),
+				intersection_point,
+				end.move_toward(intersection_point, draw_shortened + 0.5 * node_b.size.y)
+			]
 
 		draw_polyline(
-			[
-				start.move_toward(intersection_point, draw_shortened),
-				intersection_point,
-				end.move_toward(intersection_point, draw_shortened)
-			],
+			points,
 			draw_color,
-			draw_line_width,
+			draw_width,
 			draw_antialiased
 		)

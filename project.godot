@@ -16,13 +16,13 @@ run/main_scene="res://examples/demo.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[display]
-
-window/size/resizable=false
-
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/pyramid_container/plugin.cfg")
+
+[gui]
+
+common/snap_controls_to_pixels=false
 
 [rendering]
 

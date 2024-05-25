@@ -1,53 +1,113 @@
-[gd_scene load_steps=3 format=3 uid="uid://bhe8eglhjhobb"]
+[gd_scene load_steps=4 format=3 uid="uid://bhe8eglhjhobb"]
 
 [ext_resource type="Script" path="res://examples/demo.gd" id="1_wbsos"]
 [ext_resource type="Script" path="res://addons/pyramid_container/pyramid_container.gd" id="2_ba0ju"]
+[ext_resource type="Texture2D" uid="uid://cvfkub7ela4u5" path="res://icon.svg" id="3_qfxls"]
 
-[node name="TestScene" type="Control"]
-layout_mode = 3
+[node name="Demo" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
 script = ExtResource("1_wbsos")
 
-[node name="PyramidContainer" type="Container" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Instructions" type="Label" parent="VBox"]
+layout_mode = 2
+text = "<SPACE> Toggle Visuals          <R> Change container direction"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="PyramidContainer" type="Container" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("2_ba0ju")
 draw_enabled = true
 
-[node name="P1" type="Label" parent="PyramidContainer"]
+[node name="Label01" type="Label" parent="VBox/PyramidContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "P1"
+text = "Test"
 
-[node name="P2" type="Label" parent="PyramidContainer"]
+[node name="Label02" type="Label" parent="VBox/PyramidContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "P2"
+text = "Test Test"
 
-[node name="P3" type="Label" parent="PyramidContainer"]
+[node name="Label03" type="Label" parent="VBox/PyramidContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "P3"
+text = "Test"
 
-[node name="P4" type="Label" parent="PyramidContainer"]
+[node name="Label04" type="Label" parent="VBox/PyramidContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "P4"
+text = "Test Test"
 
-[node name="B1" type="Label" parent="PyramidContainer"]
+[node name="Label05" type="Label" parent="VBox/PyramidContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "P1"
+text = "Test Test"
 
-[node name="B2" type="Label" parent="PyramidContainer"]
+[node name="Label06" type="Label" parent="VBox/PyramidContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "P4"
+text = "Test"
+
+[node name="Label07" type="Label" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Test Test"
+
+[node name="Label08" type="Label" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Test"
+
+[node name="Label09" type="Label" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Test"
+
+[node name="Label10" type="Label" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Test Test"
+
+[node name="Label11" type="Label" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Test Test"
+
+[node name="Label12" type="Label" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Test"
+
+[node name="Button1" type="Button" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Test"
+
+[node name="Button2" type="Button" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Test Test"
+
+[node name="TextureRect" type="TextureRect" parent="VBox/PyramidContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("3_qfxls")
