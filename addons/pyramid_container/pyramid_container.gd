@@ -1,6 +1,6 @@
 @tool
-extends Container
-class_name PyramidContainer
+@icon("pyramid_container.svg")
+class_name PyramidContainer extends Container
 ## A container that arranges its child controls in the shape of a pyramid.
 
 enum Direction {
