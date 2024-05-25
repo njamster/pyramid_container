@@ -1,5 +1,7 @@
 @tool
 extends Container
+class_name PyramidContainer
+## A container that arranges its child controls in the shape of a pyramid.
 
 enum Direction {
 	UP,
