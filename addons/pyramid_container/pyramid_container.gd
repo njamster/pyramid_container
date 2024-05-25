@@ -9,13 +9,44 @@ enum Direction {
 	DOWN,
 	LEFT
 }
-@export var direction := Direction.RIGHT # TODO: doesn't work yet!
+@export var direction := Direction.RIGHT:
+	set(value):
+		direction = value
+		if is_inside_tree():
+			propagate_notification(NOTIFICATION_SORT_CHILDREN)
+			queue_redraw()
+
 
 @export_group("Line Drawing", "draw_")
-@export var draw_enabled := false
-@export_range(1, 10, 1, "or_greater", "suffix:px") var draw_line_width := 3.0
-@export_range(0, 50, 1, "or_greater", "suffix:px") var draw_shortened := 20
-@export var draw_antialiased := true
+@export var draw_enabled := false:
+	set(value):
+		draw_enabled = value
+		if is_inside_tree():
+			queue_redraw()
+
+@export_range(1, 10, 1, "or_greater", "suffix:px") var draw_line_width := 3.0:
+	set(value):
+		draw_line_width = value
+		if is_inside_tree():
+			queue_redraw()
+
+@export_range(0, 50, 1, "or_greater", "suffix:px") var draw_shortened := 20:
+	set(value):
+		draw_shortened = value
+		if is_inside_tree():
+			queue_redraw()
+
+@export var draw_antialiased := true:
+	set(value):
+		draw_antialiased = value
+		if is_inside_tree():
+			queue_redraw()
+
+@export var draw_color := Color.WHITE:
+	set(value):
+		draw_color = value
+		if is_inside_tree():
+			queue_redraw()
 
 
 # for internal use only!
@@ -46,10 +77,23 @@ func _notification(what: int) -> void:
 		var num_nodes_in_layer := 2 ** _biggest_included_power_of_two
 
 		for i in range(_num_children):
-			fit_child_in_rect(get_child(i), Rect2(
-				Vector2(size.x / _num_layers * layer, size.y / num_nodes_in_layer * pos_in_layer),
-				Vector2(size.x / _num_layers, size.y / num_nodes_in_layer)
-			))
+			var factor := layer
+			if direction == Direction.LEFT or direction == Direction.UP:
+				factor = _num_layers - layer - 1
+
+			match direction:
+				# horizontal directions
+				Direction.LEFT, Direction.RIGHT:
+					fit_child_in_rect(get_child(i), Rect2(
+						Vector2(size.x / _num_layers * factor, size.y / num_nodes_in_layer * pos_in_layer),
+						Vector2(size.x / _num_layers, size.y / num_nodes_in_layer)
+					))
+				# vertical directions
+				Direction.UP, Direction.DOWN:
+					fit_child_in_rect(get_child(i), Rect2(
+						Vector2(size.x / num_nodes_in_layer * pos_in_layer, size.y / _num_layers * factor),
+						Vector2(size.x / num_nodes_in_layer, size.y / _num_layers)
+					))
 
 			if pos_in_layer == num_nodes_in_layer - 1:
 				layer += 1
@@ -76,18 +120,16 @@ func _draw() -> void:
 		var start = node_a.global_position + 0.5 * node_a.size
 		var end = node_b.global_position + 0.5 * node_b.size
 		var intersection_point := Vector2(end.x, start.y)
+		if direction == Direction.UP or direction == Direction.DOWN:
+			intersection_point = Vector2(start.x, end.y)
 
-		draw_line(
-			start.move_toward(intersection_point, draw_shortened),
-			intersection_point,
-			Color("White"),
-			draw_line_width,
-			draw_antialiased
-		)
-		draw_line(
-			intersection_point,
-			end.move_toward(intersection_point, draw_shortened),
-			Color("White"),
+		draw_polyline(
+			[
+				start.move_toward(intersection_point, draw_shortened),
+				intersection_point,
+				end.move_toward(intersection_point, draw_shortened)
+			],
+			draw_color,
 			draw_line_width,
 			draw_antialiased
 		)
