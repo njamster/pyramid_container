@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bhe8eglhjhobb"]
 
-[ext_resource type="Script" path="res://test_scene.gd" id="1_fs0c0"]
-[ext_resource type="Script" path="res://addons/pyramid_container/pyramid_container.gd" id="1_v1skr"]
+[ext_resource type="Script" path="res://examples/demo.gd" id="1_wbsos"]
+[ext_resource type="Script" path="res://addons/pyramid_container/pyramid_container.gd" id="2_ba0ju"]
 
 [node name="TestScene" type="Control"]
 layout_mode = 3
@@ -10,7 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_fs0c0")
+script = ExtResource("1_wbsos")
 
 [node name="PyramidContainer" type="Container" parent="."]
 layout_mode = 1
@@ -19,7 +19,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_v1skr")
+script = ExtResource("2_ba0ju")
 draw_enabled = true
 
 [node name="P1" type="Label" parent="PyramidContainer"]

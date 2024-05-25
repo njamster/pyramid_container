@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="PyramidContainer"
-run/main_scene="res://test_scene.tscn"
+config/description="A container that arranges its child controls in the shape of a pyramid."
+run/main_scene="res://examples/demo.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
