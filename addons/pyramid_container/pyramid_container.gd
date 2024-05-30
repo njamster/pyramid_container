@@ -10,12 +10,11 @@ enum Direction {
 	LEFT  = 3
 }
 
-@export var direction := Direction.RIGHT:
+@export var direction := Direction.UP:
 	set(value):
 		direction = value
 		if is_inside_tree():
 			queue_sort()
-			queue_redraw()
 
 
 @export_group("Line Drawing", "draw_")
@@ -56,54 +55,47 @@ var _num_children : int
 var _biggest_included_power_of_two : int
 
 
-func _init() -> void:
-	child_entered_tree.connect(func(node: Node):
-		if not node.visibility_changed.is_connected(queue_redraw):
-			node.visibility_changed.connect(queue_redraw)
-	)
-
-func _ready() -> void:
-	if draw_enabled:
-		await get_tree().process_frame
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_SORT_CHILDREN:
+		_resort()
 		queue_redraw()
 
 
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_SORT_CHILDREN:
-		_num_children = get_child_count()
+func _resort() -> void:
+	_num_children = get_child_count()
 
-		_num_layers = 0
-		var remaining_children := _num_children
-		_biggest_included_power_of_two = int(log(_num_children) / log(2))
-		while remaining_children > 0:
-			remaining_children -= 2 ** (_biggest_included_power_of_two - _num_layers)
-			_num_layers += 1
+	_num_layers = 0
+	var remaining_children := _num_children
+	_biggest_included_power_of_two = int(log(_num_children) / log(2))
+	while remaining_children > 0:
+		remaining_children -= 2 ** (_biggest_included_power_of_two - _num_layers)
+		_num_layers += 1
 
-		var layer := 0
-		var pos_in_layer := 0
-		var num_nodes_in_layer := 2 ** _biggest_included_power_of_two
+	var layer := 0
+	var pos_in_layer := 0
+	var num_nodes_in_layer := 2 ** _biggest_included_power_of_two
 
-		for i in range(_num_children):
-			var factor := layer
-			if direction == Direction.LEFT or direction == Direction.UP:
-				factor = _num_layers - layer - 1
+	for i in range(_num_children):
+		var factor := layer
+		if direction == Direction.LEFT or direction == Direction.UP:
+			factor = _num_layers - layer - 1
 
-			match direction:
-				# horizontal directions
-				Direction.LEFT, Direction.RIGHT:
-					var item_size := Vector2(size.x / float(_num_layers), size.y / float(num_nodes_in_layer))
-					fit_child_in_rect(get_child(i), Rect2(item_size * Vector2(factor, pos_in_layer), item_size))
-				# vertical directions
-				Direction.UP, Direction.DOWN:
-					var item_size := Vector2(size.x / float(num_nodes_in_layer), size.y / float(_num_layers))
-					fit_child_in_rect(get_child(i), Rect2(item_size * Vector2(pos_in_layer, factor), item_size))
+		match direction:
+			# horizontal directions
+			Direction.LEFT, Direction.RIGHT:
+				var item_size := Vector2(size.x / float(_num_layers), size.y / float(num_nodes_in_layer))
+				fit_child_in_rect(get_child(i), Rect2(item_size * Vector2(factor, pos_in_layer), item_size))
+			# vertical directions
+			Direction.UP, Direction.DOWN:
+				var item_size := Vector2(size.x / float(num_nodes_in_layer), size.y / float(_num_layers))
+				fit_child_in_rect(get_child(i), Rect2(item_size * Vector2(pos_in_layer, factor), item_size))
 
-			if pos_in_layer == num_nodes_in_layer - 1:
-				layer += 1
-				pos_in_layer = 0
-				num_nodes_in_layer /= 2
-			else:
-				pos_in_layer += 1
+		if pos_in_layer == num_nodes_in_layer - 1:
+			layer += 1
+			pos_in_layer = 0
+			num_nodes_in_layer /= 2
+		else:
+			pos_in_layer += 1
 
 
 func _draw() -> void:
