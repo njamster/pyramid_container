@@ -5,14 +5,20 @@
    width="16"
    version="1.1"
    id="svg1"
-   sodipodi:docname="icon.svg"
+   sodipodi:docname="pyramid_container.svg"
    inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs1" />
+     id="defs1">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1" />
+  </defs>
   <sodipodi:namedview
      id="namedview1"
      pagecolor="#505050"
@@ -23,45 +29,21 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="40.800448"
-     inkscape:cx="7.9410894"
-     inkscape:cy="10.759686"
-     inkscape:window-width="1837"
-     inkscape:window-height="1046"
+     inkscape:cx="11.33566"
+     inkscape:cy="9.9508711"
+     inkscape:window-width="1825"
+     inkscape:window-height="1034"
      inkscape:window-x="63"
      inkscape:window-y="14"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:current-layer="svg1" />
-  <rect
-     style="fill:#8eef97;fill-opacity:1;stroke-width:1.7053;stroke-linecap:round;stroke-linejoin:round"
-     id="rect10"
-     width="2"
-     height="2"
-     x="7"
-     y="1"
-     rx="0"
-     ry="0"
-     inkscape:transform-center-x="-3.2637866"
-     inkscape:transform-center-y="-1.1772816"
-     inkscape:label="rect10" />
-  <rect
-     style="fill:#8eef97;fill-opacity:1;stroke-width:1.7053;stroke-linecap:round;stroke-linejoin:round"
-     id="rect9"
-     width="2"
-     height="2"
-     x="9"
-     y="5"
-     rx="0"
-     ry="0"
-     inkscape:transform-center-x="-3.2637866"
-     inkscape:transform-center-y="-1.1772816"
-     inkscape:label="rect09" />
   <rect
      style="fill:#8eef97;fill-opacity:1;stroke-width:1.7053;stroke-linecap:round;stroke-linejoin:round"
      id="rect8"
      width="2"
      height="2"
-     x="5"
-     y="5"
+     x="7"
+     y="1"
      rx="0"
      ry="0"
      inkscape:transform-center-x="-3.2637866"
@@ -73,7 +55,7 @@
      width="2"
      height="2"
      x="11"
-     y="9"
+     y="7"
      rx="0"
      ry="0"
      inkscape:transform-center-x="-3.2637866"
@@ -81,23 +63,11 @@
      inkscape:label="rect07" />
   <rect
      style="fill:#8eef97;fill-opacity:1;stroke-width:1.7053;stroke-linecap:round;stroke-linejoin:round"
-     id="rect6"
-     width="2"
-     height="2"
-     x="7"
-     y="9"
-     rx="0"
-     ry="0"
-     inkscape:transform-center-x="-3.2637866"
-     inkscape:transform-center-y="-1.1772816"
-     inkscape:label="rect06" />
-  <rect
-     style="fill:#8eef97;fill-opacity:1;stroke-width:1.7053;stroke-linecap:round;stroke-linejoin:round"
      id="rect5"
      width="2"
      height="2"
      x="3"
-     y="9"
+     y="7"
      rx="0"
      ry="0"
      inkscape:transform-center-x="-3.2637866"
