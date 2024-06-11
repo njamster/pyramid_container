@@ -48,15 +48,6 @@ var _layer_width : Array[float] = [ 0.0 ]
 var _node_heights : Array[float] = []
 
 
-func _highest_included_power_of_two(n: int) -> int:
-	n |= n >> 1
-	n |= n >> 2
-	n |= n >> 4
-	n |= n >> 8
-	n |= n >> 16
-	return n ^ (n >> 1)
-
-
 func _get_minimum_size() -> Vector2:
 	var minimum_size := Vector2.ZERO
 
@@ -88,18 +79,31 @@ func _get_minimum_size() -> Vector2:
 			# child should be at least as high as its predecessors from the previous layer combined
 			var predecessor_1_height := _node_heights[i - 2 * max_nodes_in_layer]
 			var predecessor_2_height := _node_heights[i - 2 * max_nodes_in_layer + 1]
-			child_size.y = max(child_size.y, predecessor_1_height + predecessor_2_height)
+			if _is_vertical():
+				child_size.x = max(child_size.x, predecessor_1_height + predecessor_2_height)
+			else:
+				child_size.y = max(child_size.y, predecessor_1_height + predecessor_2_height)
 
-		_layer_width[layer] = max(_layer_width[layer], child_size.x)
+		if _is_vertical():
+			_layer_width[layer] = max(_layer_width[layer], child_size.y)
+			_node_heights.append(child_size.x)
+		else:
+			_layer_width[layer] = max(_layer_width[layer], child_size.x)
+			_node_heights.append(child_size.y)
 
-		_node_heights.append(child_size.y)
 		# if child has no successor in the next layer...
 		if i + max_nodes_in_layer - ceil(0.5 * pos_in_layer) >= sortable_child_count:
 			# ...its size is part of the minimum size of the container
-			minimum_size.y += child_size.y
+			if _is_vertical():
+				minimum_size.x += child_size.x
+			else:
+				minimum_size.y += child_size.y
 
 		if pos_in_layer == max_nodes_in_layer -1 or i == sortable_child_count - 1:
-			minimum_size.x += _layer_width[layer]
+			if _is_vertical():
+				minimum_size.y += _layer_width[layer]
+			else:
+				minimum_size.x += _layer_width[layer]
 
 		if pos_in_layer == max_nodes_in_layer -1:
 			layer += 1
@@ -135,29 +139,56 @@ func _resort() -> void:
 
 	var layer := 0
 	var offset := Vector2.ZERO
+	if direction == Direction.UP:
+		offset.y = size.y
+	elif direction == Direction.LEFT:
+		offset.x = size.x
 	var pos_in_layer := 0
 	var max_nodes_in_layer := _highest_included_power_of_two(sortable_child_count)
 
 	for i in sortable_child_count:
 		var child := sortable_children[i]
 
-		var width = _layer_width[layer]
+		var width := _node_heights[i] if _is_vertical() else _layer_width[layer]
 		if size_flags_horizontal & SIZE_FILL:
-			width += stretch_space.x / _layer_width.size()
+			if _is_vertical():
+				width += stretch_space.x / max_nodes_in_layer
+			else:
+				width += stretch_space.x / _layer_width.size()
 
-		var height = _node_heights[i]
+		var height := _layer_width[layer] if _is_vertical() else _node_heights[i]
 		if size_flags_vertical & SIZE_FILL:
-			height += stretch_space.y / max_nodes_in_layer
+			if _is_vertical():
+				height += stretch_space.y / _layer_width.size()
+			else:
+				height += stretch_space.y / max_nodes_in_layer
 
-		fit_child_in_rect(child, Rect2(offset.x, offset.y, width, height))
+
+		if direction == Direction.UP:
+			fit_child_in_rect(child, Rect2(offset.x, offset.y - height, width, height))
+		elif direction == Direction.LEFT:
+			fit_child_in_rect(child, Rect2(offset.x - width, offset.y, width, height))
+		else:
+			fit_child_in_rect(child, Rect2(offset.x, offset.y, width, height))
 
 		if pos_in_layer == max_nodes_in_layer - 1  or i == sortable_child_count - 1:
-			offset = Vector2(offset.x + width, 0)
+			match direction:
+				Direction.UP:
+					offset = Vector2(0, offset.y - height)
+				Direction.RIGHT:
+					offset = Vector2(offset.x + width, 0)
+				Direction.DOWN:
+					offset = Vector2(0, offset.y + height)
+				Direction.LEFT:
+					offset = Vector2(offset.x - width, 0)
 			layer += 1
 			pos_in_layer = 0
 			max_nodes_in_layer /= 2
 		else:
-			offset.y += height
+			if _is_vertical():
+				offset.x += width
+			else:
+				offset.y += height
 			pos_in_layer += 1
 
 	queue_redraw()
@@ -234,3 +265,16 @@ func _draw() -> void:
 			draw_width,
 			draw_antialiased
 		)
+
+
+func _highest_included_power_of_two(n: int) -> int:
+	n |= n >> 1
+	n |= n >> 2
+	n |= n >> 4
+	n |= n >> 8
+	n |= n >> 16
+	return n ^ (n >> 1)
+
+
+func _is_vertical() -> bool:
+	return direction == Direction.UP or direction == Direction.DOWN

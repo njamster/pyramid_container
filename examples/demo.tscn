@@ -31,7 +31,7 @@ uppercase = true
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("2_ba0ju")
-direction = 1
+direction = 3
 draw_enabled = true
 
 [node name="Label" type="Label" parent="VBox/PyramidContainer"]
