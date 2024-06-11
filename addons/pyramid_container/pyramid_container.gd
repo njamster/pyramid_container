@@ -13,6 +13,7 @@ enum Direction {
 @export var direction := Direction.UP:
 	set(value):
 		direction = value
+		update_minimum_size()
 		queue_sort()
 
 
