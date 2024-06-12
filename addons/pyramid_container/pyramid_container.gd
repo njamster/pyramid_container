@@ -99,8 +99,8 @@ func _get_minimum_size() -> Vector2:
 		var child_size := child.get_combined_minimum_size()
 		if layer > 0:
 			# child should be at least as high as its predecessors from the previous layer combined
-			var predecessor_1_height := _node_heights[i - 2 * max_nodes_in_layer]
-			var predecessor_2_height := _node_heights[i - 2 * max_nodes_in_layer + 1]
+			var predecessor_1_height := _node_heights[i - 2 * max_nodes_in_layer + pos_in_layer]
+			var predecessor_2_height := _node_heights[i - 2 * max_nodes_in_layer + pos_in_layer + 1]
 			if _is_vertical():
 				child_size.x = max(child_size.x, predecessor_1_height + predecessor_2_height)
 			else:
@@ -127,19 +127,34 @@ func _get_minimum_size() -> Vector2:
 			else:
 				minimum_size.x += _layer_width[layer]
 
-		if pos_in_layer == max_nodes_in_layer - 1:
-			layer += 1
-			pos_in_layer = 0
-			max_nodes_in_layer /= 2
-			if i < sortable_child_count - 1:
+		if i < sortable_child_count - 1:
+			if pos_in_layer == max_nodes_in_layer - 1:
+				layer += 1
+				pos_in_layer = 0
+				max_nodes_in_layer /= 2
 				# as long as we aren't on the last layer, add separation
 				if _is_vertical():
 					minimum_size.y += v_separation
 				else:
 					minimum_size.x += h_separation
 				_layer_width.append(0.0)
+			else:
+				pos_in_layer += 1
+
+	for i in range(sortable_child_count-1, _highest_included_power_of_two(sortable_child_count) - 1, -1):
+		var own_size := _node_heights[i]
+
+		var predecessor_1_height := _node_heights[i - 2 * max_nodes_in_layer + pos_in_layer]
+		var predecessor_2_height := _node_heights[i - 2 * max_nodes_in_layer + pos_in_layer + 1]
+		var stretch_space := own_size - predecessor_1_height - predecessor_2_height
+		_node_heights[i - 2 * max_nodes_in_layer + pos_in_layer] += 0.5 * stretch_space
+		_node_heights[i - 2 * max_nodes_in_layer + pos_in_layer + 1] += 0.5 * stretch_space
+
+		if pos_in_layer == 0:
+			max_nodes_in_layer *= 2
+			pos_in_layer = max_nodes_in_layer - 1
 		else:
-			pos_in_layer += 1
+			pos_in_layer -= 1
 
 	return minimum_size
 
