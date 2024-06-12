@@ -12,13 +12,24 @@ enum Direction {
 
 @export var direction := Direction.UP:
 	set(value):
+		var was_vertical := _is_vertical()
 		direction = value
+		if _is_vertical() != was_vertical:
+			var swap_value := h_separation
+			h_separation = v_separation
+			v_separation = swap_value
 		update_minimum_size()
 		queue_sort()
 
-@export_range(0, 20, 1, "or_greater", "suffix:px") var separation := 0:
+@export_range(0, 20, 1, "or_greater", "suffix:px") var h_separation := 0:
 	set(value):
-		separation = value
+		h_separation = value
+		update_minimum_size()
+		queue_sort()
+
+@export_range(0, 20, 1, "or_greater", "suffix:px") var v_separation := 0:
+	set(value):
+		v_separation = value
 		update_minimum_size()
 		queue_sort()
 
@@ -78,9 +89,9 @@ func _get_minimum_size() -> Vector2:
 	var max_nodes_in_layer := _highest_included_power_of_two(sortable_child_count)
 
 	if _is_vertical():
-		minimum_size.x += (min(max_nodes_in_layer, sortable_child_count) - 1) * separation
+		minimum_size.x += (min(max_nodes_in_layer, sortable_child_count) - 1) * h_separation
 	else:
-		minimum_size.y += (min(max_nodes_in_layer, sortable_child_count) - 1) * separation
+		minimum_size.y += (min(max_nodes_in_layer, sortable_child_count) - 1) * v_separation
 
 	for i in sortable_child_count:
 		var child = sortable_children[i]
@@ -123,9 +134,9 @@ func _get_minimum_size() -> Vector2:
 			if i < sortable_child_count - 1:
 				# as long as we aren't on the last layer, add separation
 				if _is_vertical():
-					minimum_size.y += separation
+					minimum_size.y += v_separation
 				else:
-					minimum_size.x += separation
+					minimum_size.x += h_separation
 				_layer_width.append(0.0)
 		else:
 			pos_in_layer += 1
@@ -179,11 +190,10 @@ func _resort() -> void:
 			else:
 				height += stretch_space.y / max_nodes_in_layer
 
-		if separation and layer > 0:
-			if _is_vertical():
-				width += ((2 ** layer) - 1) * separation
-			else:
-				height += ((2 ** layer) - 1) * separation
+		if _is_vertical():
+			width += ((2 ** layer) - 1) * h_separation
+		else:
+			height += ((2 ** layer) - 1) * v_separation
 
 		if direction == Direction.UP:
 			fit_child_in_rect(child, Rect2(offset.x, offset.y - height, width, height))
@@ -193,23 +203,25 @@ func _resort() -> void:
 			fit_child_in_rect(child, Rect2(offset.x, offset.y, width, height))
 
 		if pos_in_layer == max_nodes_in_layer - 1  or i == sortable_child_count - 1:
+			# move from the current to the next layer
 			match direction:
 				Direction.UP:
-					offset = Vector2(0, offset.y - height - separation)
+					offset = Vector2(0, offset.y - height - v_separation)
 				Direction.RIGHT:
-					offset = Vector2(offset.x + width + separation, 0)
+					offset = Vector2(offset.x + width + h_separation, 0)
 				Direction.DOWN:
-					offset = Vector2(0, offset.y + height + separation)
+					offset = Vector2(0, offset.y + height + v_separation)
 				Direction.LEFT:
-					offset = Vector2(offset.x - width - separation, 0)
+					offset = Vector2(offset.x - width - h_separation, 0)
 			layer += 1
 			pos_in_layer = 0
 			max_nodes_in_layer /= 2
 		else:
+			# move to the next position in the current layer
 			if _is_vertical():
-				offset.x += width + separation
+				offset.x += width + h_separation
 			else:
-				offset.y += height + separation
+				offset.y += height + v_separation
 			pos_in_layer += 1
 
 	queue_redraw()

@@ -32,7 +32,8 @@ layout_mode = 2
 size_flags_vertical = 6
 script = ExtResource("2_ba0ju")
 direction = 3
-separation = 50
+h_separation = 100
+v_separation = 60
 draw_enabled = true
 
 [node name="Label" type="Label" parent="VBox/PyramidContainer"]
