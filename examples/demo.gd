@@ -12,6 +12,7 @@ func _ready() -> void:
 	for i in range(15):
 		var color_rect := ColorRect.new()
 		color_rect.color = Color(randf(), randf(), randf())
+		color_rect.custom_minimum_size = 20 * Vector2.ONE
 		node_set_2.append(color_rect)
 
 

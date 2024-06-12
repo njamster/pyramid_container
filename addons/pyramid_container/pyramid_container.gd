@@ -16,6 +16,11 @@ enum Direction {
 		update_minimum_size()
 		queue_sort()
 
+@export_range(0, 20, 1, "or_greater", "suffix:px") var separation := 0:
+	set(value):
+		separation = value
+		update_minimum_size()
+		queue_sort()
 
 @export_group("Line Drawing", "draw_")
 @export var draw_enabled := false:
@@ -72,6 +77,11 @@ func _get_minimum_size() -> Vector2:
 	var pos_in_layer := 0
 	var max_nodes_in_layer := _highest_included_power_of_two(sortable_child_count)
 
+	if _is_vertical():
+		minimum_size.x += (min(max_nodes_in_layer, sortable_child_count) - 1) * separation
+	else:
+		minimum_size.y += (min(max_nodes_in_layer, sortable_child_count) - 1) * separation
+
 	for i in sortable_child_count:
 		var child = sortable_children[i]
 
@@ -100,17 +110,22 @@ func _get_minimum_size() -> Vector2:
 			else:
 				minimum_size.y += child_size.y
 
-		if pos_in_layer == max_nodes_in_layer -1 or i == sortable_child_count - 1:
+		if pos_in_layer == max_nodes_in_layer - 1 or i == sortable_child_count - 1:
 			if _is_vertical():
 				minimum_size.y += _layer_width[layer]
 			else:
 				minimum_size.x += _layer_width[layer]
 
-		if pos_in_layer == max_nodes_in_layer -1:
+		if pos_in_layer == max_nodes_in_layer - 1:
 			layer += 1
 			pos_in_layer = 0
 			max_nodes_in_layer /= 2
 			if i < sortable_child_count - 1:
+				# as long as we aren't on the last layer, add separation
+				if _is_vertical():
+					minimum_size.y += separation
+				else:
+					minimum_size.x += separation
 				_layer_width.append(0.0)
 		else:
 			pos_in_layer += 1
@@ -164,6 +179,11 @@ func _resort() -> void:
 			else:
 				height += stretch_space.y / max_nodes_in_layer
 
+		if separation and layer > 0:
+			if _is_vertical():
+				width += ((2 ** layer) - 1) * separation
+			else:
+				height += ((2 ** layer) - 1) * separation
 
 		if direction == Direction.UP:
 			fit_child_in_rect(child, Rect2(offset.x, offset.y - height, width, height))
@@ -175,21 +195,21 @@ func _resort() -> void:
 		if pos_in_layer == max_nodes_in_layer - 1  or i == sortable_child_count - 1:
 			match direction:
 				Direction.UP:
-					offset = Vector2(0, offset.y - height)
+					offset = Vector2(0, offset.y - height - separation)
 				Direction.RIGHT:
-					offset = Vector2(offset.x + width, 0)
+					offset = Vector2(offset.x + width + separation, 0)
 				Direction.DOWN:
-					offset = Vector2(0, offset.y + height)
+					offset = Vector2(0, offset.y + height + separation)
 				Direction.LEFT:
-					offset = Vector2(offset.x - width, 0)
+					offset = Vector2(offset.x - width - separation, 0)
 			layer += 1
 			pos_in_layer = 0
 			max_nodes_in_layer /= 2
 		else:
 			if _is_vertical():
-				offset.x += width
+				offset.x += width + separation
 			else:
-				offset.y += height
+				offset.y += height + separation
 			pos_in_layer += 1
 
 	queue_redraw()
