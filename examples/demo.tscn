@@ -35,6 +35,7 @@ script = ExtResource("2_ba0ju")
 direction = 3
 h_separation = 100
 v_separation = 60
+visible_children_only = false
 draw_enabled = true
 
 [node name="Label" type="Label" parent="VBox/PyramidContainer"]

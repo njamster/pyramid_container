@@ -33,6 +33,12 @@ enum Direction {
 		update_minimum_size()
 		queue_sort()
 
+@export var visible_children_only := true:
+	set(value):
+		visible_children_only = value
+		update_minimum_size()
+		queue_sort()
+
 @export_group("Line Drawing", "draw_")
 @export var draw_enabled := false:
 	set(value):
@@ -71,8 +77,9 @@ func _get_minimum_size() -> Vector2:
 	# only count child nodes that are currently visible
 	var sortable_children : Array[Control] = []
 	for child in get_children():
-		if child is Control and child.visible:
-			sortable_children.append(child)
+		if child is Control:
+			if child.visible or not visible_children_only:
+				sortable_children.append(child)
 
 	var sortable_child_count := sortable_children.size()
 
@@ -168,8 +175,9 @@ func _resort() -> void:
 	# only count child nodes that are currently visible
 	var sortable_children : Array[Control] = []
 	for child in get_children():
-		if child is Control and child.visible:
-			sortable_children.append(child)
+		if child is Control:
+			if child.visible or not visible_children_only:
+				sortable_children.append(child)
 
 	var sortable_child_count := sortable_children.size()
 
@@ -266,8 +274,9 @@ func _draw() -> void:
 
 	var sortable_children : Array[Control] = []
 	for child in get_children():
-		if child is Control and child.visible:
-			sortable_children.append(child)
+		if child is Control:
+			if child.visible or not visible_children_only:
+				sortable_children.append(child)
 
 	var sortable_child_count := sortable_children.size()
 
