@@ -29,10 +29,9 @@ uppercase = true
 
 [node name="PyramidContainer" type="Container" parent="VBox"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 6
+size_flags_vertical = 3
 script = ExtResource("2_ba0ju")
-direction = 3
+direction = 1
 h_separation = 100
 v_separation = 60
 visible_children_only = false
@@ -109,6 +108,7 @@ size_flags_horizontal = 4
 text = "Test"
 
 [node name="Label15" type="Label" parent="VBox/PyramidContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Test"

@@ -301,20 +301,32 @@ func _draw() -> void:
 		var end = node_b.position + 0.5 * node_b.size
 
 		var points : Array[Vector2] = []
-		if direction % 2 == 0: # vertical direction
-			var intersection_point := Vector2(start.x, end.y)
-			points = [
-				start.move_toward(intersection_point, draw_shortened + 0.5 * node_a.size.y),
-				intersection_point,
-				end.move_toward(intersection_point, draw_shortened + 0.5 * node_b.size.x)
-			]
+		if _is_vertical():
+			if (node_b.size_flags_horizontal == SIZE_SHRINK_BEGIN and i % 2 == 0) or (node_b.size_flags_horizontal == SIZE_SHRINK_END and i % 2 == 1):
+				points = [
+					start.move_toward(end, draw_shortened + 0.5 * node_a.size.x),
+					end.move_toward(start, draw_shortened + 0.5 * node_b.size.x)
+				]
+			else:
+				var intersection_point := Vector2(start.x, end.y)
+				points = [
+					start.move_toward(intersection_point, draw_shortened + 0.5 * node_a.size.y),
+					intersection_point,
+					end.move_toward(intersection_point, draw_shortened + 0.5 * node_b.size.x)
+				]
 		else:
-			var intersection_point := Vector2(end.x, start.y)
-			points = [
-				start.move_toward(intersection_point, draw_shortened + 0.5 * node_a.size.x),
-				intersection_point,
-				end.move_toward(intersection_point, draw_shortened + 0.5 * node_b.size.y)
-			]
+			if (node_b.size_flags_vertical == SIZE_SHRINK_BEGIN and i % 2 == 0) or (node_b.size_flags_vertical == SIZE_SHRINK_END and i % 2 == 1):
+				points = [
+					start.move_toward(end, draw_shortened + 0.5 * node_a.size.x),
+					end.move_toward(start, draw_shortened + 0.5 * node_b.size.x)
+				]
+			else:
+				var intersection_point := Vector2(end.x, start.y)
+				points = [
+					start.move_toward(intersection_point, draw_shortened + 0.5 * node_a.size.x),
+					intersection_point,
+					end.move_toward(intersection_point, draw_shortened + 0.5 * node_b.size.y)
+				]
 
 		draw_polyline(
 			points,
