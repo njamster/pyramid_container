@@ -33,3 +33,4 @@ common/snap_controls_to_pixels=false
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.180392, 0.203922, 0.25098, 1)
