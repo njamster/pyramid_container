@@ -1,4 +1,4 @@
-# <img src="./icon.svg" width="24px"> PyramidContainer
+# <img src="./icon.png" width="24px"> PyramidContainer
 
 A container that arranges its child controls in the shape of a pyramid. That is, the <_biggest included power of two_> nodes will form the base layer, with the amount of nodes on each subsequent layer being _halfed_, until all nodes have been assigned:
 
